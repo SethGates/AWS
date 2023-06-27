@@ -1,0 +1,12 @@
+---
+- name: Delete EC2 instances
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Get instance IDs
+      shell: "aws ec2 describe-instances --filters Name=tag:Name,Values=webserver --query 'Reservations[].Instances[].InstanceId' --output text"
+      register: instance_ids
+    - name: Terminate instances
+      shell: "aws ec2 terminate-instances --instance-ids {{ instance_ids.stdout }}"
+
+# ansible-playbook delete.yml

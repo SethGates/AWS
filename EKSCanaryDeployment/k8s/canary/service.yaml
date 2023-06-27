@@ -1,0 +1,11 @@
+kind: Service
+apiVersion: v1  
+metadata:
+  name: deployment-demo
+spec:
+  type: LoadBalancer
+  selector:
+    app: deployment-demo 
+  ports:
+    - port: 80
+      protocol: TCP

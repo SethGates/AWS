@@ -1,0 +1,31 @@
+kind: Deployment 
+apiVersion: apps/v1 
+metadata: 
+  name: deployment-demo-stable 
+  labels:
+    app: deployment-demo 
+spec:
+  replicas: 3 # Change to 1 to demonstrate 50/50 deployment
+  selector: 
+    matchLabels:
+      app: deployment-demo 
+      track: stable 
+  template: 
+    metadata: 
+      labels:
+        app: deployment-demo 
+        track: stable
+  
+    spec: 
+      containers: 
+        - name: deployment-demo-stable 
+          image: ECRIMAGEURLHERE:stable
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80 
+          resources:
+            limits:
+              cpu: 500m 
+            requests: 
+              cpu: 200m 
+      restartPolicy: Always

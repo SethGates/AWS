@@ -1,0 +1,19 @@
+kubectl create namespace production
+
+kubectl apply -f k8s/canary -n production
+
+kubectl get services -n production
+
+minikube tunnel
+
+kubectl get services -n production
+
+kubectl get deployments -n production
+
+kubectl get pods -n production
+
+kubectl delete services deployment-demo -n production
+
+delete deployment deployment-demo-canary -n production
+
+kubectl delete deployment deployment-demo-stable -n production

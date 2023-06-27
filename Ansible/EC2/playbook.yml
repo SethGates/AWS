@@ -1,0 +1,69 @@
+- name: Install Certbot and OpenSSH on EC2 instances
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Install EPEL repository on RHEL instance
+      when: "'rhel' in ansible_os_family"
+      yum:
+        name: epel-release
+        state: present
+
+    - name: Add Certbot PPA on Ubuntu instance
+      when: "'debian' in ansible_os_family"
+      apt_repository:
+        repo: ppa:certbot/certbot
+        state: present
+
+    - name: Install Certbot package on RHEL instance
+      when: "'rhel' in ansible_os_family"
+      yum:
+        name: certbot
+        state: present
+
+    - name: Install Certbot package on Ubuntu instance
+      when: "'debian' in ansible_os_family"
+      apt:
+        name: certbot
+        state: present
+
+    - name: Install Certbot package on Amazon Linux instance
+      when: "'amazon' in ansible_os_family"
+      yum:
+        name: certbot
+        state: present
+
+    - name: Install OpenSSH package
+      package:
+        name: openssh-server
+        state: present
+
+    - name: Verify Certbot installation on RHEL instance
+      when: "'rhel' in ansible_os_family"
+      command: certbot --version
+
+    - name: Verify Certbot installation on Ubuntu instance
+      when: "'debian' in ansible_os_family"
+      command: certbot --version
+
+    - name: Verify Certbot installation on Amazon Linux instance
+      when: "'amazon' in ansible_os_family"
+      command: certbot --version
+
+    - name: Verify OpenSSH installation
+      command: ssh -V
+
+    - name: Print installation verification
+      debug:
+        msg: |
+          Certbot version {{ item }} and OpenSSH are installed.
+      when: item == "certbot"
+      with_items:
+        - certbot
+      register: certbot_version_check
+
+    - debug:
+        msg: Certbot and OpenSSH are not installed.
+      when: "'certbot' not in certbot_version_check.results and certbot_version_check|length == 1"
+
+# ansible-playbook -i inventory.yml playbook.yml
